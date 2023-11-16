@@ -1,0 +1,18 @@
+{
+  "development": {
+    "jwtSecret": "S0c1@lCubeFrontUreBD#",
+    "jwtIssuer": "http://127.0.0.1:8080",
+    "jwtExpirationTime": "168h",
+    "bcryptSaltRounds": 10,
+    "SERVER_URL": "http://127.0.0.1:3000",
+    "ROOT_URL": "/home/abir/Abir/Hackathon_2023/hackathon_2023_backend"
+  },
+  "production": {
+    "jwtSecret": "S0c1@lCubeFrontUreBD#",
+    "jwtIssuer": "",
+    "jwtExpirationTime": "24h",
+    "bcryptSaltRounds": 10,
+    "SERVER_URL": "",
+    "ROOT_URL": ""
+  }
+}
