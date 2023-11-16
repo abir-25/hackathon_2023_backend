@@ -1,12 +1,12 @@
-const Mailgun = require("./mailgun");
-class MailClient {
-  constructor() {
-    this.sendMailer = new Mailgun();
-  }
+// const Mailgun = require("./mailgun");
+// class MailClient {
+//   constructor() {
+//     this.sendMailer = new Mailgun();
+//   }
 
-  sendMail = (mailObject) => {
-    return this.sendMailer.sendMail(mailObject);
-  };
-}
+//   sendMail = (mailObject) => {
+//     return this.sendMailer.sendMail(mailObject);
+//   };
+// }
 
-module.exports = MailClient;
+// module.exports = MailClient;
