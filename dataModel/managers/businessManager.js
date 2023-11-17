@@ -2,6 +2,8 @@ const { StatusCodes } = require("http-status-codes");
 const Business = require("../models/business");
 const { sequelize, Sequelize } = require("../../db");
 
+const { genereateJwt, comparePassword } = require("../../utils");
+
 const saveUser = async (business, userId) => {
   const t = await sequelize.transaction();
 
@@ -41,7 +43,32 @@ const updateUser = async (business, businessId) => {
   }
 };
 
+const getBusinessLogin = async (username, password) => {
+  const business = await getUserByUsername(username);
+  if (!business) {
+    const error = new Error("No Business Found!");
+    error.statusCode = StatusCodes.NOT_FOUND;
+    throw error;
+  }
+  const match = await comparePassword(password, business.password);
+  console.log(match);
+  if (match) {
+    const jwtData = { id: business.id, username: business.businessEmail };
+    const jwToken = genereateJwt(jwtData);
+    return await business.update({ jwToken });
+  } else {
+    const error = new Error("Invalid Email/Password!");
+    error.statusCode = StatusCodes.NOT_FOUND;
+    throw error;
+  }
+};
+
+const getUserByUsername = (username) => {
+  return Business.findOne({ where: { businessEmail: username } });
+};
+
 module.exports = {
   saveUser,
   editUserInfo,
+  getBusinessLogin,
 };

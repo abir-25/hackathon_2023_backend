@@ -42,6 +42,10 @@ Business.init(
 
     timezone: Sequelize.STRING(30),
 
+    password: Sequelize.STRING(500),
+
+    jwToken: Sequelize.STRING(500),
+
     isDeleted: {
       type: Sequelize.TINYINT,
       defaultValue: 0,

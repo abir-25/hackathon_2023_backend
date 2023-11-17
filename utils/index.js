@@ -26,6 +26,7 @@ exports.genereateEmailVerifiTokenAndHashUrl = async (user) => {
 };
 
 exports.comparePassword = async (password, hashPassword) => {
+  console.log(password, hashPassword);
   return await bcrypt.compare(password, hashPassword);
 };
 
