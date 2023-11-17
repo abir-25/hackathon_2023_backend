@@ -10,3 +10,5 @@ module.exports = {
   migrationStorageTableName: "sequelizeMeta",
   rootUrl: process.env.ROOT_URL,
 };
+
+//comment added for git testing 1
