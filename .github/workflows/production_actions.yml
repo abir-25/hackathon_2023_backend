@@ -13,7 +13,7 @@ jobs:
         with:
           host: "54.251.48.40"
           username: "root"
-          key: "hulu007k"
+          password: "hulu007k"
           port: 22
           script: |
             /bin/bash -e /var/www/scripts/ServerManage.sh
