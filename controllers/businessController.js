@@ -3,6 +3,7 @@ const { StatusCodes } = require("http-status-codes");
 const businessManager = require("../dataModel/managers/businessManager");
 const multer = require("multer");
 const uploadMiddleware = require("../middleware/file-upload");
+const Business = require("../dataModel/models/business");
 
 exports.createUser = (req, res, next) => {
   const errors = validationResult(req);
@@ -136,4 +137,66 @@ exports.updateBusinessInfo = (req, res, next) => {
         });
       });
   });
+};
+
+exports.login = (req, res, next) => {
+  console.log("API Login");
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const mappedErrors = errors.mapped();
+    const emailError = mappedErrors.email?.msg || null;
+    const passwordError = mappedErrors.password?.msg || null;
+    return res.status(StatusCodes.BAD_REQUEST).send({
+      status: StatusCodes.BAD_REQUEST,
+      message: "Bad request, entered data is incorrect",
+      emailError: emailError,
+      passwordError: passwordError,
+    });
+  }
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+  getBusinessLogin(email, password)
+    .then((result) => {
+      return res.status(StatusCodes.OK).send({
+        status: 1,
+        token: result.jwToken,
+        business: {
+          id: result.id,
+          userEmail: result.userEmail,
+          name: result.name,
+          phoneNo: result.phoneNo,
+        },
+      });
+    })
+    .catch((error) => {
+      const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+      return res.status(statusCode).send({
+        emailError: error.message,
+      });
+    });
+};
+
+const getBusinessLogin = async (username, password) => {
+  const business = await getUserByUsername(username);
+  if (!business) {
+    const error = new Error("No Business Found!");
+    error.statusCode = StatusCodes.NOT_FOUND;
+    throw error;
+  }
+  const match = await comparePassword(password, business.password);
+  if (match) {
+    const jwtData = { id: business.id, username: business.businessEmail };
+    const jwToken = genereateJwt(jwtData);
+    return await business.update({ jwToken });
+  } else {
+    const error = new Error("Invalid Email/Password!");
+    error.statusCode = StatusCodes.NOT_FOUND;
+    throw error;
+  }
+};
+
+const getUserByUsername = (username) => {
+  return Business.findOne({ where: { businessEmail: username } });
 };
