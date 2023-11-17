@@ -7,6 +7,22 @@ const isAuth = require("../../../middleware/is-auth");
 
 const router = express.Router();
 
+router.post(
+  "/login",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Please enter a valid email")
+      .normalizeEmail({ gmail_remove_dots: false }),
+    body("password")
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage("Password can't be empty"),
+  ],
+  businessController.login
+);
+
 // router.post(
 //   "/save-new-business",
 //   isAuth,

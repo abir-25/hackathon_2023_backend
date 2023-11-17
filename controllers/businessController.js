@@ -157,7 +157,8 @@ exports.login = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  getBusinessLogin(email, password)
+  businessManager
+    .getBusinessLogin(email, password)
     .then((result) => {
       return res.status(StatusCodes.OK).send({
         status: 1,
@@ -176,27 +177,4 @@ exports.login = (req, res, next) => {
         emailError: error.message,
       });
     });
-};
-
-const getBusinessLogin = async (username, password) => {
-  const business = await getUserByUsername(username);
-  if (!business) {
-    const error = new Error("No Business Found!");
-    error.statusCode = StatusCodes.NOT_FOUND;
-    throw error;
-  }
-  const match = await comparePassword(password, business.password);
-  if (match) {
-    const jwtData = { id: business.id, username: business.businessEmail };
-    const jwToken = genereateJwt(jwtData);
-    return await business.update({ jwToken });
-  } else {
-    const error = new Error("Invalid Email/Password!");
-    error.statusCode = StatusCodes.NOT_FOUND;
-    throw error;
-  }
-};
-
-const getUserByUsername = (username) => {
-  return Business.findOne({ where: { businessEmail: username } });
 };
