@@ -1,117 +1,66 @@
-// const { Sequelize, Model, sequelize } = require("../../db");
+const { Sequelize, Model, sequelize } = require("../../db");
 
-// class Business extends Model {}
+class Business extends Model {}
 
-// Business.init(
-//   {
-//     businessName: Sequelize.STRING(250),
+Business.init(
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
 
-//     streetAddress: Sequelize.STRING(500),
+    businessName: Sequelize.STRING(250),
 
-//     countryId: {
-//       type: Sequelize.INTEGER,
-//       defaultValue: 0,
-//     },
+    streetAddress: Sequelize.STRING(500),
 
-//     stateId: {
-//       type: Sequelize.INTEGER,
-//       defaultValue: 0,
-//     },
+    countryId: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
 
-//     districtId: {
-//       type: Sequelize.INTEGER,
-//       defaultValue: 0,
-//     },
+    stateId: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
 
-//     businessEmail: Sequelize.STRING(100),
+    districtId: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
 
-//     businessPhoneNo: Sequelize.STRING(50),
+    businessEmail: Sequelize.STRING(100),
 
-//     businessLogo: Sequelize.STRING(250),
+    businessPhoneNo: Sequelize.STRING(50),
 
-//     defaultNote: Sequelize.STRING(1000),
+    businessLogo: Sequelize.STRING(250),
 
-//     isInvoiceWithHeader: {
-//       type: Sequelize.TINYINT,
-//       defaultValue: 1,
-//     },
+    timezoneId: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
 
-//     currencyId: {
-//       type: Sequelize.INTEGER,
-//       defaultValue: 0,
-//     },
+    timezone: Sequelize.STRING(30),
 
-//     timezoneId: {
-//       type: Sequelize.INTEGER,
-//       defaultValue: 0,
-//     },
+    isDeleted: {
+      type: Sequelize.TINYINT,
+      defaultValue: 0,
+    },
 
-//     timezone: Sequelize.STRING(30),
+    createdAt: Sequelize.DATE,
 
-//     dateFormatId: {
-//       type: Sequelize.INTEGER,
-//       defaultValue: 1,
-//     },
+    updatedAt: {
+      type: Sequelize.DATE,
+      defaultValue: null,
+    },
+  },
+  {
+    sequelize,
+    timestamps: true,
+    createdAt: true,
+    updatedAt: false,
+    tableName: "businesses",
+  }
+);
 
-//     dateFormat: {
-//       type: Sequelize.STRING(20),
-//       defaultValue: "DD MMM YYYY",
-//     },
-
-//     isSetInWords: {
-//       type: Sequelize.TINYINT,
-//       defaultValue: 0,
-//     },
-
-//     isDeleted: {
-//       type: Sequelize.TINYINT,
-//       defaultValue: 0,
-//     },
-
-//     createdAt: Sequelize.DATE,
-
-//     updatedAt: {
-//       type: Sequelize.DATE,
-//       defaultValue: null,
-//     },
-
-//     invoicePrefix: {
-//       type: Sequelize.STRING(15),
-//       defaultValue: "INV",
-//     },
-
-//     invoiceNoDigits: {
-//       type: Sequelize.INTEGER,
-//       defaultValue: 0,
-//     },
-
-//     quotationPrefix: {
-//       type: Sequelize.STRING(15),
-//       defaultValue: "QT",
-//     },
-
-//     quotationNoDigits: {
-//       type: Sequelize.INTEGER,
-//       defaultValue: 0,
-//     },
-
-//     billPrefix: {
-//       type: Sequelize.STRING(15),
-//       defaultValue: "BL",
-//     },
-
-//     billNoDigits: {
-//       type: Sequelize.INTEGER,
-//       defaultValue: 0,
-//     },
-//   },
-//   {
-//     sequelize,
-//     timestamps: true,
-//     createdAt: true,
-//     updatedAt: false,
-//     tableName: "businesses",
-//   }
-// );
-
-// module.exports = Business;
+module.exports = Business;

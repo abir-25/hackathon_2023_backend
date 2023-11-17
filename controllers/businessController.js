@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const { StatusCodes } = require("http-status-codes");
-const userManager = require("../dataModel/managers/userManager");
+const businessManager = require("../dataModel/managers/businessManager");
 const multer = require("multer");
 const uploadMiddleware = require("../middleware/file-upload");
 
@@ -31,7 +31,7 @@ exports.createUser = (req, res, next) => {
     currencyId: 1,
   };
 
-  userManager
+  businessManager
     .saveUser(business, req.userId)
     .then((result) => {
       res.status(StatusCodes.OK).send({
@@ -57,23 +57,26 @@ exports.createUser = (req, res, next) => {
     });
 };
 
-// exports.getBusinessInfo = (req, res, next) => {
-//   const businessId = req.query.businessId || 0;
-//   businessManager
-//     .getBusinessInfo(req, businessId)
-//     .then((business) => {
-//       res.status(StatusCodes.OK).send({
-//         status: 1,
-//         business,
-//       });
-//     })
-//     .catch((error) => {
-//       const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
-//       return res.status(statusCode).send({
-//         message: error.message,
-//       });
-//     });
-// };
+exports.getBusinessInfo = (req, res, next) => {
+  res.status(StatusCodes.OK).send({
+    status: 1,
+  });
+  // const businessId = req.query.businessId || 0;
+  // businessManager
+  //   .getBusinessInfo(req, businessId)
+  //   .then((business) => {
+  //     res.status(StatusCodes.OK).send({
+  //       status: 1,
+  //       business,
+  //     });
+  //   })
+  //   .catch((error) => {
+  //     const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+  //     return res.status(statusCode).send({
+  //       message: error.message,
+  //     });
+  //   });
+};
 
 exports.updateBusinessInfo = (req, res, next) => {
   const upload = multer({

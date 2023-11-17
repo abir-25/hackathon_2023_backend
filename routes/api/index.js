@@ -4,7 +4,7 @@ const router = express.Router();
 
 // const accountRouter = require("./account");
 // const locationRouter = require("./location");
-// const businessRouter = require("./business");
+const businessRouter = require("./business");
 // const productRouter = require("./product");
 // const invoiceRouter = require("./invoice");
 // const adminRouter = require("./admin");
@@ -21,7 +21,7 @@ const router = express.Router();
 
 // router.use("/account", accountRouter);
 // router.use("/location", locationRouter);
-// router.use("/business", businessRouter);
+router.use("/business", businessRouter);
 // router.use("/product", productRouter);
 // router.use("/invoice", invoiceRouter);
 // router.use("/admin", adminRouter);

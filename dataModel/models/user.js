@@ -12,6 +12,10 @@ User.init(
 
     name: Sequelize.STRING(200),
 
+    phoneNo: Sequelize.STRING(50),
+
+    email: Sequelize.STRING(200),
+
     userName: Sequelize.STRING(300),
 
     password: Sequelize.STRING(300),

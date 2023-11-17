@@ -1,6 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
 const Business = require("../models/business");
-const BusinessOwnerMapper = require("../models/businessOwnerMapper");
 const { sequelize, Sequelize } = require("../../db");
 
 const saveUser = async (business, userId) => {
