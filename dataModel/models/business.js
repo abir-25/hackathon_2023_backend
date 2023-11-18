@@ -14,6 +14,20 @@ Business.init(
 
     streetAddress: Sequelize.STRING(500),
 
+    typeId: {
+      type: Sequelize.INTEGER,
+      defaultValue: 1,
+    },
+
+    sectorId: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+
+    sectorName: Sequelize.STRING(200),
+
+    occupation: Sequelize.STRING(200),
+
     countryId: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
@@ -43,6 +57,8 @@ Business.init(
     timezone: Sequelize.STRING(30),
 
     password: Sequelize.STRING(500),
+
+    previousPassword: Sequelize.STRING(100),
 
     jwToken: Sequelize.STRING(500),
 

@@ -8,7 +8,7 @@ const isAuth = require("../../../middleware/is-auth");
 const router = express.Router();
 
 router.post(
-  "/login",
+  "/signin",
   [
     body("email")
       .isEmail()
@@ -21,6 +21,21 @@ router.post(
       .withMessage("Password can't be empty"),
   ],
   businessController.login
+);
+
+router.post(
+  "/signup",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Please enter a valid email")
+      .normalizeEmail({ gmail_remove_dots: false }),
+    body("password")
+      .trim()
+      .isLength({ min: 5 })
+      .withMessage("password must be at least 5 characters"),
+  ],
+  businessController.register
 );
 
 // router.post(

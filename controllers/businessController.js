@@ -165,9 +165,20 @@ exports.login = (req, res, next) => {
         token: result.jwToken,
         business: {
           id: result.id,
-          userEmail: result.userEmail,
-          name: result.name,
-          phoneNo: result.phoneNo,
+          businessName: req.body.name,
+          streetAddress: req.body.streetAddress,
+          countryId: req.body.countryId || 0,
+          stateId: req.body.stateId || 0,
+          districtId: req.body.districtId || 0,
+          businessEmail: req.body.email || null,
+          businessPhoneNo: req.body.phoneNo || null,
+          typeId: req.body.typeId,
+          sectorId: req.body.sectorId,
+          sectorName: req.body.sectorName,
+          occopation: req.body.occopation,
+          email: req.body.email,
+          password: req.body.password,
+          previousPassword: req.body.password,
         },
       });
     })
@@ -175,6 +186,67 @@ exports.login = (req, res, next) => {
       const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
       return res.status(statusCode).send({
         emailError: error.message,
+      });
+    });
+};
+
+exports.register = (req, res, next) => {
+  console.log("API register");
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const extractedErrors = {};
+    errors.array().forEach((err) => {
+      extractedErrors[err.param] = err.msg;
+    });
+
+    return res.status(StatusCodes.BAD_REQUEST).send({
+      status: StatusCodes.BAD_REQUEST,
+      message: "Bad request, entered data is incorrect.",
+      ...extractedErrors,
+    });
+  }
+
+  const business = {
+    businessName: req.body.name,
+    streetAddress: req.body.streetAddress,
+    countryId: req.body.countryId || 0,
+    stateId: req.body.stateId || 0,
+    districtId: req.body.districtId || 0,
+    businessEmail: req.body.email || null,
+    businessPhoneNo: req.body.phoneNo || null,
+    typeId: req.body.typeId,
+    sectorId: req.body.sectorId,
+    sectorName: req.body.sectorName,
+    occopation: req.body.occopation,
+    email: req.body.email,
+    password: req.body.password,
+    previousPassword: req.body.password,
+  };
+
+  businessManager
+    .createUser(business)
+    .then((result) => {
+      res.status(StatusCodes.OK).send({
+        status: 1,
+        message: "Business registration successfull.",
+        token: result.jwToken,
+        business: {
+          id: result.id,
+          email: result.businessEmail,
+          name: result.businessName,
+          phoneNo: result.businessPhoneNo,
+          typeId: result.typeId,
+          sectorId: result.sectorId,
+          sectorName: result.sectorName,
+        },
+      });
+    })
+    .catch((error) => {
+      const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+      return res.status(statusCode).send({
+        message: error.message,
+        email: error.email || null,
       });
     });
 };
