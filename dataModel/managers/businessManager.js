@@ -95,9 +95,14 @@ const createUser = async (business) => {
   }
 };
 
+const getBusinessInfo = async (req, businessId) => {
+  return await Business.findByPk(businessId);
+};
+
 module.exports = {
   saveUser,
   createUser,
   editUserInfo,
   getBusinessLogin,
+  getBusinessInfo,
 };

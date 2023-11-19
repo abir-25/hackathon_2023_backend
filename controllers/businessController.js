@@ -59,9 +59,6 @@ exports.createUser = (req, res, next) => {
 };
 
 exports.getBusinessInfo = (req, res, next) => {
-  res.status(StatusCodes.OK).send({
-    status: 1,
-  });
   const businessId = req.query.businessId || 0;
   businessManager
     .getBusinessInfo(req, businessId)
