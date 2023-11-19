@@ -6,6 +6,8 @@ const Survey = require("../models/survey");
 const Question = require("../models/question");
 const Option = require("../models/option");
 const Response = require("../models/response");
+const { getSurveyList } = require("../../controllers/surveyController");
+const ResponseResult = require("../models/responseResult");
 
 const saveSurvey = async (data) => {
   const questionList = data.questionList ?? [];
@@ -79,7 +81,15 @@ const createSurvey = async (surveyObj, questionList) => {
   }
 };
 
-const getSurveyListByBusinessId = (businessId) => {
+const getSurveyListByBusinessId = async (businessId) => {
+  const surveyList = await getSurveyListForEncryptedId(businessId);
+  surveyList.forEach((item) => {
+    item.enSurveyId = item.id * 12345665;
+  });
+  return surveyList;
+};
+
+const getSurveyListForEncryptedId = (businessId) => {
   const query =
     "SELECT s.`id`, s.`title`, s.`description`, COUNT(DISTINCT q.id) AS questionCount, COUNT(DISTINCT r.id) as responseCount " +
     " FROM `surveys` s" +
@@ -169,7 +179,17 @@ const mapSurvey = (result, questionData, optionData) => {
 
 const saveResponse = async (data) => {
   try {
-    return await Response.bulkCreate(data);
+    let survey = await Response.bulkCreate(data);
+    if (survey) {
+      const result = {
+        surveyId: data[0].surveyId,
+        phoneNo: data.phoneNo ?? "",
+        email: data.email ?? "",
+        result: data.result ?? "Result is ok",
+      };
+      await ResponseResult.create(result);
+      return survey;
+    }
   } catch (e) {
     const error = new Error("Unable to create Response!");
     error.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
