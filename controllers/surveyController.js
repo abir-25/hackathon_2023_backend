@@ -52,16 +52,15 @@ exports.getSurveyList = (req, res, next) => {
     });
 };
 
-exports.getCustomerById = (req, res, next) => {
-  const customerId = req.query.customerId;
-  const businessId = req.query.businessId;
+exports.getSurveyById = (req, res, next) => {
+  const surveyId = req.query.surveyId;
 
-  crmManager
-    .getCustomerById(customerId, businessId)
-    .then((customer) => {
+  surveyManager
+    .getSurveyById(surveyId)
+    .then((survey) => {
       return res.status(StatusCodes.OK).send({
         status: 1,
-        customer,
+        survey,
       });
     })
     .catch((error) => {
@@ -116,6 +115,37 @@ exports.removeSurvey = (req, res, next) => {
         status: 1,
         message: "Survey deleted successfully.",
         surveyId,
+      });
+    })
+    .catch((error) => {
+      const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+      return res.status(statusCode).send({
+        message: error.message,
+      });
+    });
+};
+
+exports.saveNewResponse = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const mappedErrors = errors.mapped();
+    const businessIdError = mappedErrors.businessId?.msg || null;
+    return res.status(StatusCodes.BAD_REQUEST).send({
+      status: StatusCodes.BAD_REQUEST,
+      message: "Bad request, entered data is incorrect.",
+      businessIdError,
+    });
+  }
+
+  const data = req.body;
+
+  surveyManager
+    .saveResponse(data)
+    .then((survey) => {
+      res.status(StatusCodes.OK).send({
+        status: 1,
+        message: "Thank you for you response",
+        id: survey.id,
       });
     })
     .catch((error) => {
