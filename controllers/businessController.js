@@ -62,21 +62,21 @@ exports.getBusinessInfo = (req, res, next) => {
   res.status(StatusCodes.OK).send({
     status: 1,
   });
-  // const businessId = req.query.businessId || 0;
-  // businessManager
-  //   .getBusinessInfo(req, businessId)
-  //   .then((business) => {
-  //     res.status(StatusCodes.OK).send({
-  //       status: 1,
-  //       business,
-  //     });
-  //   })
-  //   .catch((error) => {
-  //     const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
-  //     return res.status(statusCode).send({
-  //       message: error.message,
-  //     });
-  //   });
+  const businessId = req.query.businessId || 0;
+  businessManager
+    .getBusinessInfo(req, businessId)
+    .then((business) => {
+      res.status(StatusCodes.OK).send({
+        status: 1,
+        business,
+      });
+    })
+    .catch((error) => {
+      const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+      return res.status(statusCode).send({
+        message: error.message,
+      });
+    });
 };
 
 exports.updateBusinessInfo = (req, res, next) => {
