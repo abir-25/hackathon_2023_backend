@@ -5,6 +5,7 @@ const MailManager = require("./mailManager");
 const Survey = require("../models/survey");
 const Question = require("../models/question");
 const Option = require("../models/option");
+const Response = require("../models/response");
 
 const saveSurvey = async (data) => {
   const questionList = data.questionList ?? [];
@@ -82,105 +83,99 @@ const getSurveyListByBusinessId = (businessId) => {
   const query =
     "SELECT s.`id`, s.`title`, s.`description`, COUNT(DISTINCT q.id) AS questionCount, COUNT(DISTINCT r.id) as responseCount " +
     " FROM `surveys` s" +
-    " left join questions q on s.id=q.surveyId left join responses r on s.id=r.surveyId" +
+    " left join questions q on s.id=q.surveyId left join responseResults r on s.id=r.surveyId" +
     " WHERE s.businessId=:businessId and s.isDeleted = :isDeleted GROUP BY s.`id`, s.`title`, s.`description` order by s.`id` desc";
 
-  //     SELECT
-  //     s.id AS surveyId,
-  //     s.surveyName,
-  //     COUNT(DISTINCT r.id) AS responseCount,
-  //     COUNT(DISTINCT q.id) AS questionCount
-  // FROM
-  //     surveys s
-  // LEFT JOIN
-  //     responses r ON s.id = r.surveyId
-  // LEFT JOIN
-  //     questions q ON s.id = q.surveyId
-  // GROUP BY
-  //     s.id, s.surveyName;
-
-  console.log(query);
   const params = { businessId: businessId, isDeleted: 0 };
   return dbManager.executeQueryDataReturnWithParameter(query, params);
 };
 
-// const getCustomerById = async (customerId, businessId) => {
-//   const result = await getCustomerByCustomerId(customerId, businessId);
-//   const contactData = await getContactPersonByCustomerIdAndBusinessId(
-//     customerId
-//   );
-//   const customerData = mapCustomer(result, contactData);
-//   return customerData ?? null;
-// };
+const getSurveyById = async (surveyId) => {
+  console.log(surveyId);
+  const result = await getSurveyBySurveyId(surveyId);
+  const questionData = await getQuestionsBySurveyId(surveyId);
+  const optionData = await getOptionsBySurveyId(surveyId);
+  const surveyData = mapSurvey(result, questionData, optionData);
+  return surveyData ?? null;
+};
 
-// const getCustomerByCustomerId = async (customerId, businessId) => {
-//   const query =
-//     "SELECT c.`customerId`, c.`businessId`, c.`customerType`, c.`name`, c.`email`, c.`phoneNo`, c.`websiteUrl`, c.`streetAddress`," +
-//     "c.`countryId`, c.`stateId`, c.`districtId`, c.`postalCode`, c.`contactPersonName`, c.`contactPersonEmail`, c.`contactPersonPhoneNo`," +
-//     "c.`position`, c.`isClient`, c.`status`, c.`isActive`, c.`isDeleted`, c.`createdAt`, c.`updatedAt`,  d.districtName, s.stateName, co.countryName FROM `customers` c" +
-//     " left join districts d on c.districtId=d.districtId left join states s on d.stateId=s.stateId left join countries co on s.countryId=co.countryId " +
-//     "WHERE c.businessId=:businessId AND c.isDeleted=:isDeleted AND c.customerId=:customerId";
+const getSurveyBySurveyId = async (surveyId) => {
+  const query =
+    "SELECT `id`, `businessId`, `title`, `description` FROM `surveys`" +
+    " WHERE isDeleted=:isDeleted AND id=:surveyId";
 
-//   const params = {
-//     businessId: businessId,
-//     isDeleted: 0,
-//     customerId: customerId,
-//   };
-//   return dbManager.executeQueryDataReturnWithParameter(query, params);
-// };
+  const params = {
+    isDeleted: 0,
+    surveyId: surveyId,
+  };
+  return dbManager.executeQueryDataReturnWithParameter(query, params);
+};
 
-// const getContactPersonByCustomerIdAndBusinessId = (customerId) => {
-//   const query =
-//     "SELECT personId, name as personName, email as personEmail, phoneNo as personPhoneNo, position as personPosition FROM contactPersons WHERE customerId = :customerId AND isDeleted = :isDeleted";
-//   const params = {
-//     customerId: customerId,
-//     isDeleted: 0,
-//   };
-//   return dbManager.executeQueryDataReturnWithParameter(query, params);
-// };
+const getQuestionsBySurveyId = (surveyId) => {
+  const query =
+    "SELECT id, surveyId, type, title, description, answer FROM questions WHERE surveyId = :surveyId AND isDeleted = :isDeleted";
+  const params = {
+    surveyId: surveyId,
+    isDeleted: 0,
+  };
+  return dbManager.executeQueryDataReturnWithParameter(query, params);
+};
 
-// const mapCustomer = (result, contactData) => {
-//   let customer = {
-//     customerId: result[0].customerId,
-//     businessId: result[0].businessId,
-//     customerType: result[0].customerType,
-//     name: result[0].name,
-//     email: result[0].email,
-//     phoneNo: result[0].phoneNo,
-//     websiteUrl: result[0].websiteUrl,
-//     streetAddress: result[0].streetAddress,
-//     countryId: result[0].countryId,
-//     stateId: result[0].stateId,
-//     districtId: result[0].districtId,
-//     postalCode: result[0].postalCode,
-//     contactPersonName:
-//       contactData.length > 0 ? contactData[0].contactPersonName : "",
-//     contactPersonEmail:
-//       contactData.length > 0 ? contactData[0].contactPersonEmail : "",
-//     contactPersonPhoneNo:
-//       contactData.length > 0 ? contactData[0].contactPersonPhoneNo : "",
-//     position: contactData.length > 0 ? contactData[0].position : "",
-//     isClient: result[0].isClient || 0,
-//     status: result[0].status || 0,
-//     contactList: [],
-//   };
+const getOptionsBySurveyId = (surveyId) => {
+  const query =
+    "SELECT id, surveyId, questionId, title FROM options WHERE surveyId = :surveyId AND isDeleted = :isDeleted";
+  const params = {
+    surveyId: surveyId,
+    isDeleted: 0,
+  };
+  return dbManager.executeQueryDataReturnWithParameter(query, params);
+};
 
-//   if (contactData.length > 0) {
-//     contactData.forEach((_contact) => {
-//       const contactPerson = {
-//         personId: _contact.personId,
-//         customerId: _contact.customerId,
-//         contactPersonName: _contact.personName,
-//         contactPersonEmail: _contact.personEmail,
-//         contactPersonPhoneNo: _contact.personPhoneNo,
-//         contactPersonPosition: _contact.personPosition,
-//       };
-//       customer.contactList.push(contactPerson);
-//     });
-//   }
+const mapSurvey = (result, questionData, optionData) => {
+  let survey = {
+    id: result[0].id,
+    businessId: result[0].businessId,
+    title: result[0].title,
+    description: result[0].description,
+    questionList: [],
+  };
 
-//   return customer;
-// };
+  if (questionData.length > 0) {
+    questionData.forEach((_question) => {
+      const question = {
+        questionId: _question.id,
+        surveyId: _question.surveyId,
+        type: _question.type,
+        title: _question.title,
+        description: _question.description,
+        answer: _question.answer,
+      };
+      survey.questionList.push(question);
+    });
+  }
+
+  if (survey.questionList.length > 0) {
+    survey.questionList.forEach((question) => {
+      const matchingOptions = optionData.filter(
+        (option) => option.questionId === question.questionId
+      );
+
+      question.optionList = matchingOptions;
+    });
+  }
+
+  return survey;
+};
+
+const saveResponse = async (data) => {
+  try {
+    return await Response.bulkCreate(data);
+  } catch (e) {
+    const error = new Error("Unable to create Response!");
+    error.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+    throw error;
+  }
+};
 
 // const editCustomer = async (data) => {
 //   const contactList = data.contactList ?? [];
@@ -567,6 +562,8 @@ module.exports = {
   saveSurvey,
   getSurveyListByBusinessId,
   removeSurvey,
+  getSurveyById,
+  saveResponse,
   // getCustomerListByBusinessId,
   // getCustomerById,
   // editCustomer,

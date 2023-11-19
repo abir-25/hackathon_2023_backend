@@ -1,8 +1,8 @@
 const { Sequelize, Model, sequelize } = require("../../db");
 
-class Response extends Model {}
+class ResponseResult extends Model {}
 
-Response.init(
+ResponseResult.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -15,12 +15,9 @@ Response.init(
       defaultValue: 0,
     },
 
-    questionId: {
-      type: Sequelize.INTEGER,
-      defaultValue: 0,
-    },
+    phoneNo: Sequelize.STRING(100),
 
-    answer: Sequelize.STRING(500),
+    email: Sequelize.STRING(200),
 
     result: Sequelize.STRING(1500),
 
@@ -41,8 +38,8 @@ Response.init(
     timestamps: true,
     createdAt: true,
     updatedAt: false,
-    tableName: "responses",
+    tableName: "responseResults",
   }
 );
 
-module.exports = Response;
+module.exports = ResponseResult;

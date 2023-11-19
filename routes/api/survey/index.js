@@ -23,7 +23,9 @@ router.post(
 
 router.get("/get-survey-list", isAuth, surveyController.getSurveyList);
 
-// router.get("/get-customer-by-id", isAuth, crmController.getCustomerById);
+router.get("/get-survey-by-id", surveyController.getSurveyById);
+
+router.post("/create-response", surveyController.saveNewResponse);
 
 // router.post(
 //   "/update-customer",
